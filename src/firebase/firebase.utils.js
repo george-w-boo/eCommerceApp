@@ -1,8 +1,9 @@
-import firebase from 'firebase/compat/app';
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-const config = {
+const firebaseApp = initializeApp({
   apiKey: "AIzaSyBi0-D2ITIrH2BhVcBJ7yqP5c1MxCeD46I",
   authDomain: "ecommerceapp-e9938.firebaseapp.com",
   projectId: "ecommerceapp-e9938",
@@ -10,15 +11,20 @@ const config = {
   messagingSenderId: "326751075936",
   appId: "1:326751075936:web:9f24bb51171fd137a30d05",
   measurementId: "G-BFFK2DCJ6J"
-};
+});
 
-firebase.initializeApp(config);
-
-export const auth = getAuth();
-// export const firestore = firebase.firestore();
+export const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 const provider = new GoogleAuthProvider();
-// provider.setCustomParameters({prompt: 'select_account'});
+// Detect auth state
+onAuthStateChanged(auth, user => {
+  if (user !== null) {
+    console.log('logged in');
+  } else {
+    console.log('No user');
+  }
+});
 
 export const signInWithGoogle = () => {
   signInWithPopup(auth, provider)
@@ -41,7 +47,31 @@ export const signInWithGoogle = () => {
     })
 };
 
-export default firebase;
+
+//my variant
+// import firebase from 'firebase/compat/app';
+
+// import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+// const config = {
+//   apiKey: "AIzaSyBi0-D2ITIrH2BhVcBJ7yqP5c1MxCeD46I",
+//   authDomain: "ecommerceapp-e9938.firebaseapp.com",
+//   projectId: "ecommerceapp-e9938",
+//   storageBucket: "ecommerceapp-e9938.appspot.com",
+//   messagingSenderId: "326751075936",
+//   appId: "1:326751075936:web:9f24bb51171fd137a30d05",
+//   measurementId: "G-BFFK2DCJ6J"
+// };
+
+// firebase.initializeApp(config);
+
+// export const auth = getAuth();
+// // export const firestore = firebase.firestore();
+
+// const provider = new GoogleAuthProvider();
+// // provider.setCustomParameters({prompt: 'select_account'});
+
+
 
 //Yihua's config
 // import firebase from 'firebase/compat/app';
