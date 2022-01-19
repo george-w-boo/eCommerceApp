@@ -1,7 +1,7 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyBi0-D2ITIrH2BhVcBJ7yqP5c1MxCeD46I",
@@ -14,17 +14,35 @@ const firebaseApp = initializeApp({
 });
 
 export const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
+const firestore = getFirestore(firebaseApp);
+// console.log('db', firestore);
+
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  if (!userAuth) return;
+
+  console.log('userAuth', userAuth);
+
+  const userRef = doc(firestore, `users/${userAuth.uid}`);
+  // const snapShot = await getDoc(userRef);
+
+  const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+  try {
+    await setDoc(userRef, {
+      displayName,
+      email,
+      createdAt,
+      ...additionalData,
+    })
+  } catch(error) {
+    console.log('error creating user', error);
+  }
+
+  return userRef;
+}
 
 const provider = new GoogleAuthProvider();
-// Detect auth state
-onAuthStateChanged(auth, user => {
-  if (user !== null) {
-    console.log('logged in');
-  } else {
-    console.log('No user');
-  }
-});
 
 export const signInWithGoogle = () => {
   signInWithPopup(auth, provider)
