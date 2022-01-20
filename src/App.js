@@ -6,6 +6,8 @@ import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { onAuthStateChanged } from 'firebase/auth';
+import { onSnapshot } from 'firebase/firestore';
 
 class App extends React.Component {
   constructor() {
@@ -19,14 +21,22 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async user => {
-      createUserProfileDocument(user);
-      // if (user !== null) {
-      //   console.log('logged in');
-      //   this.setState({currentUser: user});
-      // } else {
-      //   console.log('No user');
-      // }
+    this.unsubscribeFromAuth = onAuthStateChanged(auth, async userAuth => {
+      if (userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
+
+        onSnapshot(userRef, snapShot => {
+          console.log('snapshotData', snapShot.data());
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data(),
+            }
+          })
+        });
+      }
+      console.log('code riches here');
+      this.setState({currentUser: userAuth});
     });
   }
   
@@ -36,6 +46,7 @@ class App extends React.Component {
 
   render() {
     const { currentUser } = this.state;
+    console.log('currentUser', currentUser);
 
     return (
       <>
