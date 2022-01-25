@@ -11,7 +11,7 @@ import {
   CollectionItems
 } from './collection.styles';
 
-const CollectionPage = ({ collection, match }) => {
+const CollectionPage = ({ collection }) => {
   const { title, items } = collection;
 
   return (

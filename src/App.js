@@ -3,7 +3,10 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
 import { createStructuredSelector} from 'reselect';
 
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import {
+  auth,
+  createUserProfileDocument,
+} from './firebase/firebase.utils';
 import { onAuthStateChanged } from 'firebase/auth';
 import { onSnapshot } from 'firebase/firestore';
 
@@ -17,7 +20,6 @@ import { setCurrentUser } from './redux/user/user.actions';
 import { selectCurrentUser } from './redux/user/user.selectors';
 
 import './App.css';
-
 
 class App extends React.Component {
   unsubscribeFromAuth = null;
